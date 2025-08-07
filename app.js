@@ -10,7 +10,6 @@ function loadState(){
     const raw = localStorage.getItem('counterState');
     if(!raw) return {...DEFAULT_STATE};
     const parsed = JSON.parse(raw);
-    // Merge with defaults to be safe when keys are missing
     return {
       count: Number.isFinite(parsed.count) ? parsed.count : DEFAULT_STATE.count,
       goal: Number.isFinite(parsed.goal) && parsed.goal > 0 ? parsed.goal : DEFAULT_STATE.goal,
@@ -80,9 +79,12 @@ function render(){
 }
 
 function bump(delta){
+  const wasFull = state.count >= state.goal;
   const next = state.count + Number(delta);
   state.count = clamp(next, 0, state.goal);
+  const isFull = state.count >= state.goal;
   render();
+  if(!wasFull && isFull){ burstConfetti(); }
 }
 
 // Attach button handlers
@@ -137,6 +139,8 @@ backdrop.addEventListener('click', closeSettingsPanel);
 // Save settings
 settingsForm.addEventListener('submit', (e) => {
   e.preventDefault();
+  const wasFull = state.count >= state.goal;
+
   const goal = Number(document.getElementById('goalInput').value);
   const p1 = Number(document.getElementById('p1Input').value);
   const p2 = Number(document.getElementById('p2Input').value);
@@ -150,6 +154,8 @@ settingsForm.addEventListener('submit', (e) => {
   state.minus = [m1,m2].map(v => Number.isFinite(v) ? Math.floor(v) : 0);
 
   render();
+  const isFull = state.count >= state.goal;
+  if(!wasFull && isFull){ burstConfetti(); }
   closeSettingsPanel();
 });
 
@@ -170,8 +176,6 @@ resetDefaultsBtn.addEventListener('click', () => {
   document.getElementById('m2Input').value = state.minus[1];
 });
 resetCounterBtn.addEventListener('click', () => { state.count = 0; render(); });
-
-
 
 // === Confetti ===
 // Lightweight canvas confetti without external libs
@@ -224,20 +228,6 @@ function burstConfetti(opts={}){
   rafId = requestAnimationFrame(frame);
 }
 
-// Initial confetti burst on goal reached
-if(state.count >= state.goal){
-  burstConfetti({ count: 300, duration: 4000 });
-  // Reset count after confetti
-  setTimeout(() => { state.count = 0; render(); }, 4000);
-}
-function checkGoalReached(){
-  if(state.count >= state.goal){
-    burstConfetti({ count: 300, duration: 4000 });
-    // Reset count after confetti
-    setTimeout(() => { state.count = 0; render(); }, 4000);
-  }
-}
-// Initial render
+// First paint
 render();
-// Initial goal check
-checkGoalReached();
+
