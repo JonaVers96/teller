@@ -171,8 +171,7 @@ resetDefaultsBtn.addEventListener('click', () => {
 });
 resetCounterBtn.addEventListener('click', () => { state.count = 0; render(); });
 
-// Initial render
-render();
+
 
 // === Confetti ===
 // Lightweight canvas confetti without external libs
@@ -225,10 +224,12 @@ function burstConfetti(opts={}){
   rafId = requestAnimationFrame(frame);
 }
 
-// First paint
-burstConfetti();
-
-// Trigger confetti on goal reached
+// Initial confetti burst on goal reached
+if(state.count >= state.goal){
+  burstConfetti({ count: 300, duration: 4000 });
+  // Reset count after confetti
+  setTimeout(() => { state.count = 0; render(); }, 4000);
+}
 function checkGoalReached(){
   if(state.count >= state.goal){
     burstConfetti({ count: 300, duration: 4000 });
@@ -236,12 +237,7 @@ function checkGoalReached(){
     setTimeout(() => { state.count = 0; render(); }, 4000);
   }
 }
-addEventListener('storage', (e) => {
-  if(e.key === 'counterState'){
-    state = loadState();
-    render();
-    checkGoalReached();
-  }
-});
+// Initial render
+render();
 // Initial goal check
 checkGoalReached();
