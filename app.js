@@ -171,5 +171,77 @@ resetDefaultsBtn.addEventListener('click', () => {
 });
 resetCounterBtn.addEventListener('click', () => { state.count = 0; render(); });
 
-// First paint
+// Initial render
 render();
+
+// === Confetti ===
+// Lightweight canvas confetti without external libs
+const confettiCanvas = document.createElement('canvas');
+confettiCanvas.className = 'confetti-canvas';
+document.body.appendChild(confettiCanvas);
+const cctx = confettiCanvas.getContext('2d');
+let rafId = null;
+function resizeCanvas(){ confettiCanvas.width = innerWidth; confettiCanvas.height = innerHeight; }
+addEventListener('resize', resizeCanvas); resizeCanvas();
+
+const COLORS = ['#FFC700','#FF3B3B','#2E3192','#41BBC7','#7F3F98','#00A651'];
+function rand(min, max){ return Math.random()*(max-min)+min; }
+function pick(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
+
+function burstConfetti(opts={}){
+  const { count = 180, duration = 2500 } = opts;
+  const particles = [];
+  const w = confettiCanvas.width, h = confettiCanvas.height;
+  for(let i=0;i<count;i++){
+    particles.push({
+      x: rand(0, w),
+      y: -10,
+      size: rand(6,12),
+      angle: rand(0, Math.PI*2),
+      spin: rand(-0.3, 0.3),
+      vx: rand(-3, 3),
+      vy: rand(2, 7),
+      ay: 0.12,
+      color: pick(COLORS),
+    });
+  }
+  let start;
+  function frame(ts){
+    if(!start) start = ts;
+    const t = ts - start;
+    cctx.clearRect(0,0,w,h);
+    for(const p of particles){
+      p.vy += p.ay; p.x += p.vx; p.y += p.vy; p.angle += p.spin;
+      cctx.save();
+      cctx.translate(p.x, p.y);
+      cctx.rotate(p.angle);
+      cctx.fillStyle = p.color;
+      cctx.fillRect(-p.size/2, -p.size/2, p.size, p.size);
+      cctx.restore();
+    }
+    if(t < duration){ rafId = requestAnimationFrame(frame); } else { cctx.clearRect(0,0,w,h); cancelAnimationFrame(rafId); }
+  }
+  cancelAnimationFrame(rafId);
+  rafId = requestAnimationFrame(frame);
+}
+
+// First paint
+burstConfetti();
+
+// Trigger confetti on goal reached
+function checkGoalReached(){
+  if(state.count >= state.goal){
+    burstConfetti({ count: 300, duration: 4000 });
+    // Reset count after confetti
+    setTimeout(() => { state.count = 0; render(); }, 4000);
+  }
+}
+addEventListener('storage', (e) => {
+  if(e.key === 'counterState'){
+    state = loadState();
+    render();
+    checkGoalReached();
+  }
+});
+// Initial goal check
+checkGoalReached();
