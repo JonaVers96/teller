@@ -1,87 +1,176 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="nl">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Teller met procentbalk</title>
-  <link rel="stylesheet" href="styles.css">
-  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXX" crossorigin="anonymous"></script>
-</head>
-<body>
-  <div id="backdrop" class="backdrop hidden" aria-hidden="true"></div>
-  <div class="container">
-    <header class="app-header">
-      <button id="menuToggle" class="hamburger" aria-label="Open instellingen" aria-controls="settings" aria-expanded="false">☰</button>
-      <h1>Teller met procentbalk</h1>
-    </header>
+  <head>
+    <script
+      data-cfasync="false"
+      src="https://cmp.gatekeeperconsent.com/min.js"
+    ></script>
+    <script
+      data-cfasync="false"
+      src="https://the.gatekeeperconsent.com/cmp.min.js"
+    ></script>
+    <script async src="//www.ezojs.com/ezoic/sa.min.js"></script>
+    <script>
+      window.ezstandalone = window.ezstandalone || {};
+      ezstandalone.cmd = ezstandalone.cmd || [];
+    </script>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Teller met procentbalk</title>
+    <link rel="stylesheet" href="styles.css" />
+    <script
+      async
+      src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXX"
+      crossorigin="anonymous"
+    ></script>
+  </head>
+  <body>
+    <div id="backdrop" class="backdrop hidden" aria-hidden="true"></div>
+    <div class="container">
+      <header class="app-header">
+        <button
+          id="menuToggle"
+          class="hamburger"
+          aria-label="Open instellingen"
+          aria-controls="settings"
+          aria-expanded="false"
+        >
+          ☰
+        </button>
+        <h1>Teller met procentbalk</h1>
+      </header>
 
-    <!-- Instellingen: via hamburger, niet standaard zichtbaar -->
-    <aside id="settings" class="settings" aria-hidden="true">
-      <div class="settings-inner">
-        <div class="settings-head">
-          <h2>Instellingen</h2>
-          <button id="closeSettings" class="icon-btn" aria-label="Sluit instellingen">✕</button>
+      <!-- Instellingen: via hamburger, niet standaard zichtbaar -->
+      <aside id="settings" class="settings" aria-hidden="true">
+        <div class="settings-inner">
+          <div class="settings-head">
+            <h2>Instellingen</h2>
+            <button
+              id="closeSettings"
+              class="icon-btn"
+              aria-label="Sluit instellingen"
+            >
+              ✕
+            </button>
+          </div>
+
+          <form id="settingsForm" autocomplete="off">
+            <div class="form-group">
+              <label for="goalInput">Doelwaarde (max)</label>
+              <input id="goalInput" type="number" min="1" step="1" />
+            </div>
+
+            <fieldset class="form-group">
+              <legend>Plus-knoppen</legend>
+              <div class="grid-2">
+                <label
+                  >Knop 1 <input id="p1Input" type="number" step="1"
+                /></label>
+                <label
+                  >Knop 2 <input id="p2Input" type="number" step="1"
+                /></label>
+                <label
+                  >Knop 3 <input id="p3Input" type="number" step="1"
+                /></label>
+                <label
+                  >Knop 4 <input id="p4Input" type="number" step="1"
+                /></label>
+              </div>
+            </fieldset>
+
+            <fieldset class="form-group">
+              <legend>Min-knoppen</legend>
+              <div class="grid-2">
+                <label
+                  >Knop A <input id="m1Input" type="number" step="1"
+                /></label>
+                <label
+                  >Knop B <input id="m2Input" type="number" step="1"
+                /></label>
+              </div>
+            </fieldset>
+
+            <div class="settings-actions">
+              <button type="submit" class="btn primary">Opslaan</button>
+              <button type="button" id="resetDefaults" class="btn">
+                Zet defaultwaarden
+              </button>
+              <button type="button" id="resetCounter" class="btn danger">
+                Reset teller
+              </button>
+            </div>
+          </form>
+
+          <p class="hint">
+            Sneltoetsen: <kbd>Enter</kbd> = +1, <kbd>Backspace</kbd> = −1
+            (buiten invoervelden).
+          </p>
+        </div>
+      </aside>
+
+      <!-- Altijd zichtbaar: teller, balk en 6 knoppen -->
+      <section class="counter-section" aria-live="polite">
+        <div class="summary">
+          <div class="counter-display"><span id="countText">0</span></div>
+          <div class="goal-display">
+            Doel: <strong id="goalText">1000</strong>
+          </div>
+          <div class="percent-display" id="percentText">0%</div>
         </div>
 
-        <form id="settingsForm" autocomplete="off">
-          <div class="form-group">
-            <label for="goalInput">Doelwaarde (max)</label>
-            <input id="goalInput" type="number" min="1" step="1" />
-          </div>
+        <div
+          class="progress-wrap"
+          role="progressbar"
+          aria-valuemin="0"
+          aria-valuemax="100"
+          aria-valuenow="0"
+          aria-label="Voortgang in procent"
+        >
+          <div class="progress-bar" id="progressBar"></div>
+          <div class="progress-text" id="progressLabel">0%</div>
+        </div>
+      </section>
 
-          <fieldset class="form-group">
-            <legend>Plus-knoppen</legend>
-            <div class="grid-2">
-              <label>Knop 1 <input id="p1Input" type="number" step="1"></label>
-              <label>Knop 2 <input id="p2Input" type="number" step="1"></label>
-              <label>Knop 3 <input id="p3Input" type="number" step="1"></label>
-              <label>Knop 4 <input id="p4Input" type="number" step="1"></label>
-            </div>
-          </fieldset>
+      <section class="buttons">
+        <button
+          class="btn"
+          id="btnP1"
+          type="button"
+          aria-label="Plus knop 1"
+        ></button>
+        <button
+          class="btn"
+          id="btnP2"
+          type="button"
+          aria-label="Plus knop 2"
+        ></button>
+        <button
+          class="btn"
+          id="btnP3"
+          type="button"
+          aria-label="Plus knop 3"
+        ></button>
+        <button
+          class="btn"
+          id="btnP4"
+          type="button"
+          aria-label="Plus knop 4"
+        ></button>
+        <button
+          class="btn"
+          id="btnM1"
+          type="button"
+          aria-label="Min knop A"
+        ></button>
+        <button
+          class="btn"
+          id="btnM2"
+          type="button"
+          aria-label="Min knop B"
+        ></button>
+      </section>
+    </div>
 
-          <fieldset class="form-group">
-            <legend>Min-knoppen</legend>
-            <div class="grid-2">
-              <label>Knop A <input id="m1Input" type="number" step="1"></label>
-              <label>Knop B <input id="m2Input" type="number" step="1"></label>
-            </div>
-          </fieldset>
-
-          <div class="settings-actions">
-            <button type="submit" class="btn primary">Opslaan</button>
-            <button type="button" id="resetDefaults" class="btn">Zet defaultwaarden</button>
-            <button type="button" id="resetCounter" class="btn danger">Reset teller</button>
-          </div>
-        </form>
-
-        <p class="hint">Sneltoetsen: <kbd>Enter</kbd> = +1, <kbd>Backspace</kbd> = −1 (buiten invoervelden).</p>
-      </div>
-    </aside>
-
-    <!-- Altijd zichtbaar: teller, balk en 6 knoppen -->
-    <section class="counter-section" aria-live="polite">
-      <div class="summary">
-        <div class="counter-display"><span id="countText">0</span></div>
-        <div class="goal-display">Doel: <strong id="goalText">1000</strong></div>
-        <div class="percent-display" id="percentText">0%</div>
-      </div>
-
-      <div class="progress-wrap" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-label="Voortgang in procent">
-        <div class="progress-bar" id="progressBar"></div>
-        <div class="progress-text" id="progressLabel">0%</div>
-      </div>
-    </section>
-
-    <section class="buttons">
-      <button class="btn" id="btnP1" type="button" aria-label="Plus knop 1"></button>
-      <button class="btn" id="btnP2" type="button" aria-label="Plus knop 2"></button>
-      <button class="btn" id="btnP3" type="button" aria-label="Plus knop 3"></button>
-      <button class="btn" id="btnP4" type="button" aria-label="Plus knop 4"></button>
-      <button class="btn" id="btnM1" type="button" aria-label="Min knop A"></button>
-      <button class="btn" id="btnM2" type="button" aria-label="Min knop B"></button>
-    </section>
-  </div>
-
-  <script src="app.js"></script>
-</body>
+    <script src="app.js"></script>
+  </body>
 </html>
