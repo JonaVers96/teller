@@ -1,6 +1,10 @@
 <!doctype html>
 <html lang="nl">
   <head>
+    <meta
+      name="ezoic-site-verification"
+      content="ZiIRAdXqsBDCGxluIXWjPuiaAUI1wr"
+    />
     <script
       data-cfasync="false"
       src="https://cmp.gatekeeperconsent.com/min.js"
@@ -170,6 +174,28 @@
         ></button>
       </section>
     </div>
+    <script>
+      // Initialize Ezoic Rewarded Ads
+      window.ezRewardedAds = window.ezRewardedAds || {};
+      window.ezRewardedAds.cmd = window.ezRewardedAds.cmd || [];
+
+      // Example: Request a rewarded ad with overlay
+      window.ezRewardedAds.cmd.push(function () {
+        window.ezRewardedAds.requestWithOverlay(function (result) {
+          if (result.status) {
+            console.log("Ad loaded successfully");
+            if (result.reward) {
+              // User completed the ad and earned reward
+              console.log("User earned reward!");
+              // Add your reward logic here
+            }
+          } else {
+            console.log("Ad failed to load:", result.msg);
+          }
+        });
+      });
+    </script>
+
     <div id="ezoic-pub-ad-placeholder-114"></div>
     <div id="ezoic-pub-ad-placeholder-103"></div>
     <script>
